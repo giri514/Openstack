@@ -1,0 +1,126 @@
+Canonical OpenStack
+Canonical is mainly Ubuntu based OS and has lxd containers for services to run inside the container.
+They have charms for each service to be deployed by juju which is a devops tool.
+Canonical OpenStack is deployed from a node which is called as MAAS node just like director in RHOSP.
+All commands are ran from MAAS node and some sample command are
+juju status
+juju ssh 
+Documentation: https://docs.openstack.org/project-deploy-guide/charm-deployment-guide/latest/
+
+
+
+Additional Tools and Enhancements by Canonical
+Juju: A modeling tool for deploying and managing OpenStack services.
+MAAS: Metal-as-a-Service for bare metal provisioning.
+Landscape: A system management tool for monitoring and updating OpenStack and Ubuntu systems.
+
+1. Juju (Model-Driven Application Deployment)
+Overview
+Juju is a powerful open-source tool for deploying, configuring, and managing applications in any cloud environment.
+It uses charms, which are reusable and shareable operators that contain logic for deploying and managing services.
+Juju can orchestrate applications on public/private clouds, Kubernetes, or bare metal.
+
+Working Process
+
+Modeling Applications: Create a "model" that defines the applications and their relationships.
+Deploying Charms: Juju uses charms to deploy services. Charms automate the configuration and scaling of the application.
+Integration: Juju establishes relations between services (e.g., connecting a database to a web application).
+Monitoring and Scaling: Juju monitors deployed applications and allows scaling with simple commands.
+
+Key Commands
+Bootstrap Juju Controller:
+juju bootstrap <cloud> <controller-name>
+Deploy Applications:
+
+juju deploy <charm-name>
+Establish Relationships:
+
+juju relate <app1> <app2>
+Scale Applications:
+
+juju add-unit <app-name> --num-units=<number>
+Configuration Files
+Juju stores configurations in models. You can view model configurations using:
+
+juju config <application>
+Log Files
+Logs are stored in the Juju controller. To fetch logs:
+
+juju debug-log
+Restart Services
+Restarting Juju services depends on the underlying system (e.g., restart juju-controller service on the controller node).
+
+
+
+
+2. MAAS (Metal-as-a-Service)
+Overview
+MAAS is a tool for deploying and managing bare metal servers as if they were virtual machines.
+It automates hardware provisioning for private clouds, allowing users to treat physical machines as a cloud resource.
+Working Process
+Hardware Discovery:
+MAAS discovers physical servers by PXE booting and collecting hardware details.
+Resource Pooling:
+Servers are pooled as "ready" nodes in MAAS for deployment.
+Operating System Deployment:
+MAAS provisions operating systems on the servers (Ubuntu, CentOS, Windows, etc.).
+Integration:
+MAAS integrates with tools like Juju for automated deployment and configuration.
+Key Commands
+Login to MAAS:
+ 
+maas login <profile-name> <api-url> <api-key>
+List Nodes:
+ 
+maas <profile-name> machines read
+Commission Nodes:
+ 
+maas <profile-name> machines commission
+
+maas <profile-name> machine deploy <machine-id>
+Configuration Files
+MAAS configuration is stored in:
+/etc/maas/maas.conf
+/etc/nginx/sites-enabled/maas
+Log Files
+Logs are located at:
+/var/log/maas/regiond.log
+/var/log/maas/rackd.log
+Restart Services
+To restart MAAS services:
+
+sudo systemctl restart maas-regiond maas-rackd
+
+3. Landscape (System Management Tool)
+Overview
+Landscape is a tool for monitoring, managing, and updating Ubuntu servers and OpenStack deployments.
+It allows centralized management for patching, package updates, and resource monitoring.
+Working Process
+Registration:
+Clients (Ubuntu machines) register with the Landscape server for monitoring and updates.
+Monitoring:
+Landscape collects system metrics (CPU, memory, disk usage) and application status.
+Package Management:
+Admins can push updates, install packages, or roll back changes from a single interface.
+Integration:
+Landscape integrates with OpenStack for managing cloud resources.
+Key Commands
+Register a Machine:
+ 
+sudo landscape-config --account-name <account> --registration-url <url> --ping-url <url>
+Check Machine Status:
+Via web dashboard or CLI.
+Configuration Files
+Main configuration file: /etc/landscape/client.conf
+Log Files
+Client logs: /var/log/landscape/landscape-client.log
+Server logs (on Landscape server): /var/log/landscape-server/
+Restart Services
+Restart the Landscape client:
+bash
+Copy code
+sudo systemctl restart landscape-client
+Restart the Landscape server:
+bash
+Copy code
+sudo systemctl restart landscape-server

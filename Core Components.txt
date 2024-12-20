@@ -1,0 +1,30 @@
+Core Components of Nova
+nova-api: The RESTful API service that exposes Nova functionality to clients.
+nova-scheduler: Decides where instances should be placed based on available resources.
+nova-conductor: Intermediates between the database and other Nova services (it decouples direct database access from other components).
+nova-compute: The service running on compute nodes responsible for launching and managing VMs.
+
+
+Core Components of Neutron
+neutron-server: The main API server that exposes Neutron functionality to clients.
+neutron-l3-agent: Manages Layer-3 networking functionality like routing between networks.
+neutron-dhcp-agent: Manages Dynamic Host Configuration Protocol (DHCP) for assigning IP addresses to instances.
+neutron-lb-agent: Manages load balancing functionality (if the LBaaS service is used).
+*neutron-plugin- (e.g., OVS, ML2)**: The plugin responsible for interacting with the underlying network infrastructure (Open vSwitch, Linux Bridge, etc.).
+
+Core Components  of keystone
+keystone-api: The RESTful API server that clients use to interact with Keystone.
+keystone-ldap: (Optional) For integrating Keystone with an LDAP-based identity backend.
+keystone-credential: (Optional) Manages API credentials (used for interacting with other services).
+
+Core Components  of cinder
+cinder-api: Exposes the Cinder API for creating and managing volumes.
+cinder-scheduler: Decides which backend to use when creating volumes.
+cinder-volume: Runs on the storage nodes, responsible for actual volume provisioning and management.
+cinder-backup: Manages volume backup services.
+
+
+Core Components  of glance
+glance-api: Exposes the REST API for interacting with Glance (uploading images, searching, listing, etc.).
+glance-registry: Stores image metadata and provides image discovery services.
+glance-cache: Caches images for faster access in certain deployment scenarios.
