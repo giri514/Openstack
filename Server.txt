@@ -1,0 +1,12 @@
+172.21.6.55 
+root/Password1!
+
+
+
+
+
+
+http://172.21.6.8/horizon
+admin
+admin_domain
+openstack
