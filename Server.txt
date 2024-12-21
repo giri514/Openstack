@@ -2,11 +2,93 @@
 root/Password1!
 
 
-
-
-
-
 http://172.21.6.8/horizon
 admin
 admin_domain
-openstack
+openstackx`x`
+
+root@ubuntu20:~# juju export-bundle > nitesh.yaml
+
+root@ubuntu20:~# cat nitesh.yaml
+series: focal  # Specifies the base operating system series for the deployment. focal refers to Ubuntu 20.04 LTS.
+applications:  # Defines the list of applications (services) to be deployed, their respective charms, configurations, constraints, and placement.
+  barbican:
+    charm: barbican
+    channel: yoga/stable
+    revision: 105
+    num_units: 1
+    to:
+    - lxd:2
+    constraints: arch=amd64
+  barbican-vault:
+    charm: barbican-vault
+    channel: yoga/stable
+    revision: 57
+  ceph-mon:
+    charm: ceph-mon
+    channel: quincy/stable
+    revision: 162
+    resources:
+      alert-rules: 1
+    num_units: 3
+    to:
+    - lxd:2
+    - lxd:3
+    - lxd:4
+    options:
+      expected-osd-count: 3
+      monitor-count: 3
+      source: cloud:focal-yoga
+    annotations:
+      gui-x: "790"
+      gui-y: "1540"
+    constraints: arch=amd64
+
+
+--------
+RHOSP
+
+stack/Password1!
+
+http://172.31.4.98
+
+ssh to deployment 
+
+# source stackrc for undercloud: controller and compute node 
+
+(undercloud) [stack@uc17-2 ~]$ metalsmith list - overcloud-controller-0, overcloud-compute-0
+
++--------------------------------------+----------------+--------------------------------------+------------------------+-------------+----------------------+
+| UUID                                 | Node Name      | Allocation UUID                      | Hostname               | State       | IP Addresses         |
++--------------------------------------+----------------+--------------------------------------+------------------------+-------------+----------------------+
+| f23c51bf-c491-48d4-8132-607db8b4644f | controller17-2 | 2182e45a-946b-4ef1-9635-8bfe886e76f3 | overcloud-controller-0 | MAINTENANCE | ctlplane=172.31.4.67 |
+| 7e43bbda-2159-4b94-b61a-7cde747796c5 | compute17-2    | 7dfa4764-0e89-4ac1-8a6c-13f893e741c1 | overcloud-compute-0    | MAINTENANCE | ctlplane=172.31.4.66 |
++--------------------------------------+----------------+--------------------------------------+------------------------+-------------+----------------------+
+
+
+# ls /home
+# ssh tripleo-admin@172.31.4.67
+
+[tripleo-admin@overcloud-controller-0 ~]$ sudo -i 
+
+[root@overcloud-controller-0 ~]# podman ps
+CONTAINER ID  IMAGE                                                                                     COMMAND               CREATED       STATUS                 PORTS       NAMES
+8ca3351b7c75  cluster.common.tag/rabbitmq:pcmklatest                                                    /bin/bash /usr/lo...  2 months ago  Up 2 months                        rabbitmq-bundl
+
+#podman exec -it nova_scheduler /bin/bash
+
+# source overcloudrc for overcloud - 
+(overcloud) [stack@uc17-2 ~]$ openstack server list
+
++--------------------------------------+-----------------+---------+-----------------------------------------------------------+--------------------------+----------+
+| ID                                   | Name            | Status  | Networks                                                  | Image                    | Flavor   |
++--------------------------------------+-----------------+---------+-----------------------------------------------------------+--------------------------+----------+
+| f5549097-c5e9-45aa-bf3f-397ecbe4c98c | deba_instance   | ACTIVE  | Public_FloatingIP_Network=172.21.4.60; net-1=10.10.10.185 | N/A (booted from volume) | m1.small |
+| e14bd909-c17d-4755-a1a6-0a6dd3eacbc1 | dg-cirros-vm    | ACTIVE  | Public_FloatingIP_Network=172.21.4.57                     | cirros                   | m1.tiny  |
+| 46f6d9e7-2f02-4945-8463-549505d15bc6 | deba_vm1        | SHUTOFF | net-1=10.10.10.20                                         | N/A (booted from volume) | m1.small |
+| e2251b97-66ce-4ada-8031-4728e31ae96b | vm-3            | SHUTOFF | net-1=10.10.10.229                                        | N/A (booted from volume) | custom1  |
+| 78c7c6ad-1ae1-4a4d-a301-c6a8f3cf97be | vm-2            | SHUTOFF | net-1=10.10.10.241                                        | N/A (booted from volume) | m1.small |
+| be863e8d-44b9-4d4b-afe7-5d1e4b93eadf | test-ceph-boot  | SHUTOFF | net-1=10.10.10.177                                        | N/A (booted from volume) | m1.tiny  |
+| bea2417d-1b6f-499d-a52c-58551e5b3e43 | test-lvm-booted | SHUTOFF | net-1=10.10.10.186                                        | N/A (booted from volume) | m1.tiny  |
++--------------------------------------+-----------------+---------+-----------------------------------------------------------+--------------------------+----------+
+
